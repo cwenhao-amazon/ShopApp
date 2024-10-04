@@ -33,7 +33,16 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=DimitarDSimeonov_ShopApp
+      - name: Maven Test
+        run: mvn clean test
+
+      - name: list out all file
+        run: ls ${{ github.workspace }}/target/site/jacoco/
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: |
+            ${{ github.workspace }}/target/site/jacoco/jacoco.csv
+            ${{ github.workspace }}/target/site/jacoco/jacoco.xml
